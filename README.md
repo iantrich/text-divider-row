@@ -14,6 +14,7 @@
 This card is for [Lovelace](https://www.home-assistant.io/lovelace) on [Home Assistant](https://www.home-assistant.io/) to display a text divider in an entities card
 
 ![example](example.png)
+![example2](example2.png)
 
 ## Options
 
