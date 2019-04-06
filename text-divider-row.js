@@ -38,7 +38,7 @@ class TextDividerRow extends LitElement {
           text-align: center;
         }
         .text-divider span {
-          background-color: var(--card-background-color);
+          background-color: var(--paper-card-background-color);
           padding: 1em;
           color: var(--secondary-text-color);
         }
@@ -46,7 +46,7 @@ class TextDividerRow extends LitElement {
           content: " ";
           display: block;
           border-top: 1px solid var(--secondary-text-color);
-          border-bottom: 1px solid #f7f7f7;
+          border-bottom: 1px solid var(--paper-card-background-color);
         }
       </style>
     `;
