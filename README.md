@@ -1,4 +1,4 @@
-# 📺 Text Divider Row
+# 🗂 Text Divider Row
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
