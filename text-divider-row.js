@@ -33,20 +33,24 @@ class TextDividerRow extends LitElement {
     return html`
       <style>
         .text-divider {
-          margin: 2em 0;
+          margin: 1em 0;
           line-height: 0;
           text-align: center;
+          white-space: nowrap;
+          display: flex;
+          align-items: center;
         }
         .text-divider span {
-          background-color: var(--paper-card-background-color);
           padding: 1em;
           color: var(--secondary-text-color);
         }
-        .text-divider:before {
-          content: " ";
+        .text-divider:before,
+        .text-divider:after  {
+          content: '';
+          background: var(--secondary-text-color);
           display: block;
-          border-top: 1px solid var(--secondary-text-color);
-          border-bottom: 1px solid var(--paper-card-background-color);
+          height: 1px;
+          width: 100%;
         }
       </style>
     `;
