@@ -35,7 +35,7 @@ Save [text-divider-row](https://github.com/custom-cards/text-divider-row/raw/mas
 **Example:**
 
 ```bash
-wget https://raw.githubusercontent.com/custom-cards/text-divider-row/master/dist/text-divider-row.ts
+wget https://raw.githubusercontent.com/custom-cards/text-divider-row/master/dist/text-divider-row.js
 mv text-divider-row.ts /config/www/
 ```
 
