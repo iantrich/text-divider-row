@@ -11,6 +11,9 @@
 [![Discord][discord-shield]][discord]
 [![Community Forum][forum-shield]][forum]
 
+[![Twitter][twitter]][twitter]
+[![Github][github]][github]
+
 This card is for [Lovelace](https://www.home-assistant.io/lovelace) on [Home Assistant](https://www.home-assistant.io/) to display a text divider in an entities card
 
 ![example](example.png)
@@ -65,8 +68,10 @@ text: divider
 [discord]: https://discord.gg/Qa5fW2R
 [discord-shield]: https://img.shields.io/discord/330944238910963714.svg?style=for-the-badge
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
-[forum]: https://community.home-assistant.io/
+[forum]: https://community.home-assistant.io/t/lovelace-text-divider-row/111301
 [license-shield]: https://img.shields.io/github/license/custom-cards/text-divider-row.svg?style=for-the-badge
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Ian%20Richardson%20%40iantrich-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/custom-cards/text-divider-row.svg?style=for-the-badge
 [releases]: https://github.com/custom-cards/text-divider-row/releases
+[twitter]: https://img.shields.io/twitter/follow/iantrich.svg?style=social
+[github]: https://img.shields.io/github/followers/iantrich.svg?style=social
