@@ -1,0 +1,12 @@
+/node_modules/
+yarn.lock
+.rpt2_cache/
+\.idea/workspace\.xml
+
+\.idea/misc\.xml
+
+\.idea/modules\.xml
+
+\.idea/text-divider-row\.iml
+
+\.idea/vcs\.xml
