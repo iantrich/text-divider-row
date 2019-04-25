@@ -30,13 +30,13 @@ This card is for [Lovelace](https://www.home-assistant.io/lovelace) on [Home Ass
 
 ### Step 1
 
-Save [text-divider-row](https://github.com/custom-cards/text-divider-row/raw/master/dist/text-divider-row.js) to `<config directory>/www/text-divider-row.ts` on your Home Assistant instance.
+Save [text-divider-row](https://github.com/custom-cards/text-divider-row/raw/master/dist/text-divider-row.js) to `<config directory>/www/text-divider-row.js` on your Home Assistant instance.
 
 **Example:**
 
 ```bash
-wget https://raw.githubusercontent.com/custom-cards/text-divider-row/master/dist/text-divider-row.ts
-mv text-divider-row.ts /config/www/
+wget https://raw.githubusercontent.com/custom-cards/text-divider-row/master/dist/text-divider-row.js
+mv text-divider-row.js /config/www/
 ```
 
 ### Step 2
@@ -45,7 +45,8 @@ Link `text-divider-row` inside your `ui-lovelace.yaml` or Raw Editor in the UI E
 
 ```yaml
 resources:
-  - url: text-ditext-divider-row.tspe: module
+  - url: /local/text-divider-row.js
+    type: module
 ```
 
 ### Step 3
