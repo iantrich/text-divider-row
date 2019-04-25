@@ -45,7 +45,7 @@ Link `text-divider-row` inside your `ui-lovelace.yaml` or Raw Editor in the UI E
 
 ```yaml
 resources:
-  - url: text-divider-row.js
+  - url: /local/text-divider-row.js
     type: module
 ```
 
