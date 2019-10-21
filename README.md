@@ -1,4 +1,4 @@
-# 🗂 Text Divider Row
+# 🗂 Text Divider Row by [@iantrich](https://www.github.com/iantrich)
 
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
