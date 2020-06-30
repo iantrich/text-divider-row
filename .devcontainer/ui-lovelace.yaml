@@ -1,0 +1,7 @@
+views:
+  - cards:
+      - type: entities
+        entities:
+          - entity: alarm_control_panel.alarm
+          - type: "custom:text-divider-row"
+            text: divider
