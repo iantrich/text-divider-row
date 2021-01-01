@@ -40,6 +40,7 @@ resources:
 | ---- | ------ | ------------ | -------------------------- |
 | type | string | **Required** | `custom:text-divider-row`  |
 | text | string | **Required** | Text to display in divider |
+| margin | string or number | Optional | Custom margin CSS |
 
 ## Theme Variables
 

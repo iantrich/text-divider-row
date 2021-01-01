@@ -21,13 +21,22 @@ class TextDividerRow extends LitElement {
     this._config = config;
   }
 
+  protected getMargin(): string {
+    // Explicilty check for undefined as 0 is a valid margin CSS value
+    if (!this._config || this._config.margin === undefined) {
+      return '1em 0';
+    } else {
+      return `${this._config.margin}`;
+    }
+  }
+
   protected render(): TemplateResult | void {
     if (!this._config) {
       return html``;
     }
 
     return html`
-      <h2 class="text-divider"><span>${this._config.text}</span></h2>
+      <h2 class="text-divider" style="margin: ${this.getMargin()};"><span>${this._config.text}</span></h2>
     `;
   }
 
@@ -41,7 +50,6 @@ class TextDividerRow extends LitElement {
         --line-size: var(--text-divider-line-size, 1px);
       }
       .text-divider {
-        margin: 1em 0;
         line-height: 0;
         text-align: center;
         white-space: nowrap;
