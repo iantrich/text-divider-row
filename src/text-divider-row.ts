@@ -21,13 +21,25 @@ class TextDividerRow extends LitElement {
     this._config = config;
   }
 
-  protected getMargin(): string {
+  protected getStyle(): string {
+    let styleString = '';
     // Explicilty check for undefined as 0 is a valid margin CSS value
     if (!this._config || this._config.margin === undefined) {
-      return '1em 0';
+      styleString = styleString.concat('margin: 1em 0; ');
     } else {
-      return `${this._config.margin}`;
+      styleString = styleString.concat(`margin: ${this._config.margin}; `);
     }
+    return styleString;
+  }
+
+  protected getClass(): string {
+    const allowedValues = ['center', 'left', 'right'];
+    if (this._config && this._config.align) {
+      if (allowedValues.includes(this._config.align)) {
+        return `text-divider text-divider-${this._config.align}`;
+      }
+    }
+    return 'text-divider text-divider-center';
   }
 
   protected render(): TemplateResult | void {
@@ -36,7 +48,11 @@ class TextDividerRow extends LitElement {
     }
 
     return html`
-      <h2 class="text-divider" style="margin: ${this.getMargin()};"><span>${this._config.text}</span></h2>
+      <div class="text-divider-container" style="${this.getStyle()}">
+        <h2 class="${this.getClass()}">
+          <span>${this._config.text}</span>
+        </h2>
+      </div>
     `;
   }
 
@@ -45,29 +61,47 @@ class TextDividerRow extends LitElement {
       :host {
         display: block;
         position: relative;
+        --background: var(--ha-card-background, var(--card-background-color));
         --divider-color: var(--text-divider-color, var(--secondary-text-color));
         --font-size: var(--text-divider-font-size, 14px);
         --line-size: var(--text-divider-line-size, 1px);
       }
+
       .text-divider {
+        width: 100%;
+        border-bottom: var(--line-size) solid var(--divider-color);
         line-height: 0;
-        text-align: center;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
+        margin: 10px 0 20px;
       }
+
+      .text-divider-center {
+        text-align: center;
+      }
+
+      .text-divider-left {
+        text-align: left;
+      }
+
+      .text-divider-right {
+        text-align: right;
+      }
+
       .text-divider span {
-        padding: 1em;
         color: var(--divider-color);
         font-size: var(--font-size);
+        background: var(--background);
+        padding: 1px 1em;
       }
-      .text-divider:before,
-      .text-divider:after {
-        content: '';
-        background: var(--divider-color);
-        display: block;
-        height: var(--line-size);
-        width: 100%;
+      .text-divider-center span {
+        margin: 0px;
+      }
+
+      .text-divider-left span {
+        margin: 0 0 0 1em;
+      }
+
+      .text-divider-right span {
+        margin: 0 1em 0 0;
       }
     `;
   }
