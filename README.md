@@ -41,6 +41,7 @@ resources:
 | type | string | **Required** | `custom:text-divider-row`  |
 | text | string | **Required** | Text to display in divider |
 | margin | string or number | Optional | Custom margin CSS |
+| align | string | Optional | Specifies the text alignment. Must be: 'left', 'center' or 'right' |
 
 ## Theme Variables
 
