@@ -40,7 +40,6 @@ resources:
 | ---- | ------ | ------------ | -------------------------- |
 | type | string | **Required** | `custom:text-divider-row`  |
 | text | string | **Required** | Text to display in divider |
-| margin | string or number | Optional | Custom margin CSS |
 | align | string | Optional | Specifies the text alignment. Must be: 'left', 'center' or 'right' |
 
 ## Theme Variables
@@ -48,11 +47,12 @@ resources:
 The following variables are available and can be set in your theme to change the appearance of the lock.
 Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically anything supported by CSS.
 
-| name                     | Default                | Description   |
-| ------------------------ | ---------------------- | ------------- |
-| `text-divider-color`     | `secondary-text-color` | Divider color |
-| `text-divider-font-size` | `14px`                 | Font size     |
-| `text-divider-line-size` | `1px`                  | Line size     |
+| name                     | Default                | Description    |
+| ------------------------ | ---------------------- | -------------- |
+| `text-divider-color`     | `secondary-text-color` | Divider color  |
+| `text-divider-font-size` | `14px`                 | Font size      |
+| `text-divider-line-size` | `1px`                  | Line size      |
+| `text-divider-margin`    | `1em 0`                | Divider margin |
 
 ## [Troubleshooting](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins)
 
