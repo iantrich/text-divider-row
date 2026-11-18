@@ -85,6 +85,61 @@ describe('styles', () => {
     expect(css).not.toContain('background');
     expect(css).toContain('.text-divider-empty');
   });
+
+  it('restores the 1.x look: bold text, 0.5em default margin, stubs, wrapping', () => {
+    const css = styles.cssText.replace(/\s+/g, ' ');
+    const rule = (sel: string) => {
+      const block = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].find((m) =>
+        m[1].split(',').some((part) => part.trim() === sel),
+      );
+      return block?.[2] ?? '';
+    };
+    const text = rule('.text-divider-text');
+    expect(text).toContain('font-weight: bold');
+    expect(text).toContain('flex: 0 1 auto');
+    expect(text).toContain('min-width: 0');
+    expect(text).toContain('overflow-wrap: anywhere');
+    expect(css).toContain('var(--text-divider-margin, 0.5em 0)');
+    expect(rule('.text-divider-left::before')).toContain('flex: 0 0 1em');
+    expect(rule('.text-divider-right::after')).toContain('flex: 0 0 1em');
+    expect(rule('.text-divider-left::before')).not.toContain('display: none');
+    expect(rule('.text-divider-right::after')).not.toContain('display: none');
+    expect(css).toContain('min-width: 1em');
+    expect(css).toContain('--mdc-icon-size: calc(var(--text-divider-font-size, 14px) * 1.25)');
+  });
+});
+
+describe('accessibility and card size', () => {
+  it('hides the icon from assistive tech', async () => {
+    const el = await fixture({ type: 't', icon: 'mdi:sofa', text: 'Hi' });
+    expect(q(el, 'ha-icon')?.getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('labels an interactive icon-only divider from the icon name', async () => {
+    const el = await fixture({
+      type: 't',
+      icon: 'mdi:weather-night',
+      tap_action: { action: 'navigate', navigation_path: '/x' },
+    });
+    expect(q(el, '.text-divider')?.getAttribute('aria-label')).toBe('weather-night');
+  });
+
+  it('has no aria-label with text or when not interactive', async () => {
+    const withText = await fixture({
+      type: 't',
+      icon: 'mdi:sofa',
+      text: 'Hi',
+      tap_action: { action: 'navigate', navigation_path: '/x' },
+    });
+    expect(q(withText, '.text-divider')?.hasAttribute('aria-label')).toBe(false);
+    const inert = await fixture({ type: 't', icon: 'mdi:sofa' });
+    expect(q(inert, '.text-divider')?.hasAttribute('aria-label')).toBe(false);
+  });
+
+  it('getCardSize returns 1', async () => {
+    const el = await fixture({ type: 't' });
+    expect((el as unknown as { getCardSize(): number }).getCardSize()).toBe(1);
+  });
 });
 
 describe('tap_action interactivity', () => {
@@ -119,6 +174,15 @@ describe('tap_action interactivity', () => {
     expect(space.defaultPrevented).toBe(true);
     c.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true }));
     expect(handleAction).toHaveBeenCalledTimes(3);
+  });
+
+  it('ignores repeated keydown events', async () => {
+    const el = await withHass({ type: 't', text: 'Hi', tap_action: tap });
+    const c = q(el, '.text-divider') as HTMLElement;
+    c.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', repeat: true, bubbles: true, cancelable: true }));
+    expect(handleAction).not.toHaveBeenCalled();
+    c.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+    expect(handleAction).toHaveBeenCalledTimes(1);
   });
 
   it('is inert without tap_action or with action none', async () => {

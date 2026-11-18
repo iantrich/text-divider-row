@@ -131,6 +131,7 @@ export class TextDividerRow extends LitElement {
   }
 
   private _onKeydown(ev: KeyboardEvent): void {
+    if (ev.repeat) return;
     if (ev.key === 'Enter' || ev.key === ' ') {
       ev.preventDefault();
       this._onClick();
@@ -152,6 +153,8 @@ export class TextDividerRow extends LitElement {
     const empty = !icon && text === undefined ? ' text-divider-empty' : '';
 
     const interactive = isInteractive(this._config);
+    const iconName = icon ? icon.slice(icon.indexOf(':') + 1) : undefined;
+    const label = interactive && text === undefined && iconName ? iconName : undefined;
     const cls = `text-divider text-divider-${align}${empty}${interactive ? ' text-divider-action' : ''}`;
 
     return html`
@@ -159,10 +162,11 @@ export class TextDividerRow extends LitElement {
         class="${cls}"
         role="${interactive ? 'button' : nothing}"
         tabindex="${interactive ? '0' : nothing}"
+        aria-label="${label ?? nothing}"
         @click="${this._onClick}"
         @keydown="${this._onKeydown}"
       >
-        ${icon ? html`<ha-icon icon="${icon}"></ha-icon>` : nothing}
+        ${icon ? html`<ha-icon icon="${icon}" aria-hidden="true"></ha-icon>` : nothing}
         ${
           text !== undefined
             ? html`<span class="text-divider-text${error !== undefined ? ' text-divider-error' : ''}">${text}</span>`
@@ -178,6 +182,10 @@ export class TextDividerRow extends LitElement {
 
   public static getStubConfig(): TextDividerRowConfig {
     return { type: 'custom:text-divider-row', text: 'Divider' };
+  }
+
+  public getCardSize(): number {
+    return 1;
   }
 
   public getGridOptions(): { columns: 'full'; rows: 1 } {

@@ -9,7 +9,7 @@ export const styles = css`
     display: flex;
     align-items: center;
     gap: var(--text-divider-gap, 1em);
-    margin: var(--text-divider-margin, 1em 0);
+    margin: var(--text-divider-margin, 0.5em 0);
     min-height: 1.5em;
     color: var(--text-divider-color, var(--secondary-text-color));
   }
@@ -18,15 +18,13 @@ export const styles = css`
   .text-divider::after {
     content: '';
     flex: 1;
+    min-width: 1em;
     border-top: var(--text-divider-line-size, 1px) solid var(--text-divider-color, var(--secondary-text-color));
   }
 
-  .text-divider-left::before {
-    display: none;
-  }
-
+  .text-divider-left::before,
   .text-divider-right::after {
-    display: none;
+    flex: 0 0 1em;
   }
 
   /* No text or icon: one continuous line, whatever the alignment. */
@@ -36,6 +34,7 @@ export const styles = css`
 
   .text-divider-empty::before {
     display: block;
+    flex: 1;
   }
 
   .text-divider-empty::after {
@@ -53,12 +52,15 @@ export const styles = css`
 
   ha-icon {
     flex: none;
-    --mdc-icon-size: 1.25em;
+    --mdc-icon-size: calc(var(--text-divider-font-size, 14px) * 1.25);
   }
 
   .text-divider-text {
-    flex: none;
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-size: var(--text-divider-font-size, 14px);
+    font-weight: bold;
     white-space: pre-wrap;
   }
 
