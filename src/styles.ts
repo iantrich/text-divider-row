@@ -3,6 +3,7 @@ import { css } from 'lit';
 export const styles = css`
   :host {
     display: block;
+    container-type: inline-size;
   }
 
   .text-divider {
@@ -66,5 +67,29 @@ export const styles = css`
 
   .text-divider-error {
     color: var(--error-color, #db4437);
+  }
+
+  /*
+   * Very narrow containers (a few columns side by side): the lines and gaps would reserve more
+   * room than the text gets, so drop the lines and let the text use the width. An empty divider
+   * has no text to protect and keeps its one line.
+   */
+  @container (max-width: 11em) {
+    .text-divider:not(.text-divider-empty)::before,
+    .text-divider:not(.text-divider-empty)::after {
+      display: none;
+    }
+
+    .text-divider-left {
+      justify-content: flex-start;
+    }
+
+    .text-divider-center {
+      justify-content: center;
+    }
+
+    .text-divider-right {
+      justify-content: flex-end;
+    }
   }
 `;

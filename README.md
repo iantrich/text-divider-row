@@ -167,6 +167,56 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 
 Error text uses the theme's `error-color`. The default margin matches the vertical spacing of 1.x; set `text-divider-margin` to `1em 0` for more space around the divider.
 
+### Narrow cards
+
+Long text wraps instead of overflowing. In a very narrow card (under about 11em, roughly 150px, such as several cards side by side on a phone) the lines are dropped so the text can use the whole width; the text keeps its `align` position. A divider with no text and no icon always keeps its line.
+
+## Styling with card-mod
+
+[card-mod](https://github.com/thomasloven/lovelace-card-mod) works on the divider as a row in an entities card. Target `.text-divider-text` for the text and `.text-divider::before, .text-divider::after` for the lines:
+
+```yaml
+type: entities
+entities:
+  - type: custom:text-divider-row
+    text: Lights
+    card_mod:
+      style: |
+        .text-divider-text { color: hotpink; letter-spacing: 3px; }
+        .text-divider::before, .text-divider::after { border-top: 3px dotted orange; }
+```
+
+The [theme variables](#theme-variables) can also be set from card-mod on the entities card, or on a stack, and every divider inside inherits them:
+
+```yaml
+type: entities
+card_mod:
+  style: |
+    ha-card {
+      --text-divider-color: dodgerblue;
+      --text-divider-line-size: 3px;
+      --text-divider-gap: 2em;
+    }
+entities:
+  - type: custom:text-divider-row
+    text: Lights
+```
+
+card-mod cannot style the divider when it is used as a standalone card, because the card has no `ha-card` element for card-mod to attach to. Wrap it in card-mod's `custom:mod-card`, or set the theme variables on a parent card such as a `vertical-stack`:
+
+```yaml
+type: custom:mod-card
+card:
+  type: custom:text-divider-row
+  text: Upstairs
+card_mod:
+  style: |
+    ha-card {
+      background: lavender;
+      padding: 8px;
+    }
+```
+
 ## Upgrading from 1.x
 
 - No YAML changes are needed. Existing configurations keep working.
@@ -174,7 +224,7 @@ Error text uses the theme's `error-color`. The default margin matches the vertic
 - There is a new visual editor, plus the new `icon`, `entity`, `tap_action` and `text-divider-gap` options, and templates.
 - The `.text-divider-container` wrapper is gone. `.text-divider` is now a flex `div` (not the `h2`), and the lines are drawn with `::before` and `::after`. The default vertical spacing is `0.5em 0` to match 1.x.
 - If the card is also installed under an old `/local/text-divider-row.js` resource, remove the old resource. Loading both causes an error and the old one wins.
-- If you use [card-mod](https://github.com/thomasloven/lovelace-card-mod) and targeted the old markup (`h2` or `.text-divider span`), switch to `.text-divider` and `.text-divider-text`:
+- If you use [card-mod](https://github.com/thomasloven/lovelace-card-mod) and targeted the old `h2`, there is no `h2` any more: switch to `.text-divider-text`. A `.text-divider span` selector still matches, but `.text-divider-text` is the stable name:
 
 ```yaml
 # 1.x

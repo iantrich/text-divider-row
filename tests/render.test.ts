@@ -107,6 +107,47 @@ describe('styles', () => {
     expect(css).toContain('min-width: 1em');
     expect(css).toContain('--mdc-icon-size: calc(var(--text-divider-font-size, 14px) * 1.25)');
   });
+
+  describe('narrow containers (#38)', () => {
+    const css = styles.cssText.replace(/\s+/g, ' ');
+
+    // Returns the body of the first `@container (...) { ... }` block, matching nested braces.
+    const containerBlock = (): string => {
+      const start = css.indexOf('@container');
+      if (start === -1) return '';
+      const open = css.indexOf('{', start);
+      let depth = 0;
+      for (let i = open; i < css.length; i++) {
+        if (css[i] === '{') depth++;
+        if (css[i] === '}' && --depth === 0) return css.slice(open + 1, i);
+      }
+      return '';
+    };
+
+    it('makes the host a size container so the layout can react to its own width', () => {
+      expect(css).toMatch(/:host \{[^}]*display: block;[^}]*container-type: inline-size;[^}]*\}/);
+    });
+
+    it('drops the lines below 11em so the text gets the room', () => {
+      expect(css).toContain('@container (max-width: 11em)');
+      const block = containerBlock();
+      expect(block).toMatch(/\.text-divider:not\(\.text-divider-empty\)::before[^{}]*\{[^}]*display: none/);
+      expect(block).toMatch(/\.text-divider:not\(\.text-divider-empty\)::after[^{}]*\{[^}]*display: none/);
+    });
+
+    it('keeps the aligned position once the lines are gone', () => {
+      const block = containerBlock();
+      expect(block).toMatch(/\.text-divider-left\s*\{[^}]*justify-content: flex-start/);
+      expect(block).toMatch(/\.text-divider-right\s*\{[^}]*justify-content: flex-end/);
+      expect(block).toMatch(/\.text-divider-center\s*\{[^}]*justify-content: center/);
+    });
+
+    it('never hides the line of an empty divider', () => {
+      const block = containerBlock();
+      expect(block).not.toMatch(/\.text-divider-empty::before[^{}]*\{[^}]*display: none/);
+      expect(block).not.toMatch(/\.text-divider-empty::after[^{}]*\{[^}]*display: block/);
+    });
+  });
 });
 
 describe('accessibility and card size', () => {
