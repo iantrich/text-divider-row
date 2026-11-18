@@ -28,6 +28,14 @@ describe('toHelperAction', () => {
     });
   });
 
+  it.each([[true], [{ text: 'Sure?' }]])('preserves confirmation %j', (confirmation) => {
+    expect(toHelperAction({ action: 'perform-action', perform_action: 'a.b', confirmation })).toStrictEqual({
+      action: 'call-service',
+      service: 'a.b',
+      confirmation,
+    });
+  });
+
   it('omits absent data and target', () => {
     const out = toHelperAction({ action: 'perform-action', perform_action: 'a.b' });
     expect(out).toStrictEqual({ action: 'call-service', service: 'a.b' });

@@ -10,9 +10,11 @@ export function toHelperAction(action: TapAction): ActionConfig {
   if (action.action !== 'perform-action') {
     return action;
   }
+  // Carry over every other field (confirmation, data, target, ...) so the shim is transparent.
   const mapped: Record<string, unknown> = { action: 'call-service', service: action.perform_action };
-  if (action.data !== undefined) mapped.data = action.data;
-  if (action.target !== undefined) mapped.target = action.target;
+  for (const [key, value] of Object.entries(action)) {
+    if (key !== 'action' && key !== 'perform_action' && value !== undefined) mapped[key] = value;
+  }
   return mapped as unknown as ActionConfig;
 }
 

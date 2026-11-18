@@ -11,6 +11,7 @@ export interface PerformActionConfig {
   perform_action: string;
   data?: Record<string, unknown>;
   target?: Record<string, unknown>;
+  confirmation?: boolean | { text?: string; exemptions?: { user: string }[] };
 }
 
 export type TapAction = ActionConfig | PerformActionConfig;
