@@ -19,6 +19,6 @@ export default {
       preventAssignment: true,
       values: { __CARD_VERSION__: JSON.stringify(pkg.version) },
     }),
-    terser({ format: { comments: false } }),
+    terser({ format: { comments: 'some' } }),
   ],
 };
