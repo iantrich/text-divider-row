@@ -27,8 +27,10 @@ export class TextDividerRow extends LitElement {
 
     const { align, icon, text } = this._config;
 
+    const empty = !icon && text === undefined ? ' text-divider-empty' : '';
+
     return html`
-      <div class="text-divider text-divider-${align}">
+      <div class="${`text-divider text-divider-${align}${empty}`}">
         ${icon ? html`<ha-icon icon="${icon}"></ha-icon>` : nothing}
         ${text !== undefined ? html`<span class="text-divider-text">${text}</span>` : nothing}
       </div>

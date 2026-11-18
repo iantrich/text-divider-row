@@ -45,6 +45,23 @@ describe('text-divider-row render', () => {
     expect(icons[0].getAttribute('icon')).toBe('mdi:sofa');
     expect(q(el, '.text-divider-text')).toBeNull();
     expect(container.children.length).toBe(1);
+    expect(container.querySelector('.text-divider-text')).toBeNull();
+    const strayText = Array.from(container.childNodes).filter(
+      (n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? '').trim() !== '',
+    );
+    expect(strayText).toEqual([]);
+    expect(container.classList.contains('text-divider-empty')).toBe(false);
+  });
+
+  it('marks the container empty only when there is no text and no icon', async () => {
+    const empty = await fixture({ type: 't' });
+    expect(q(empty, '.text-divider')?.classList.contains('text-divider-empty')).toBe(true);
+    const emptyLeft = await fixture({ type: 't', align: 'left', text: '' });
+    expect(q(emptyLeft, '.text-divider')?.classList.contains('text-divider-empty')).toBe(true);
+    const withText = await fixture({ type: 't', text: 'Hi' });
+    expect(q(withText, '.text-divider')?.classList.contains('text-divider-empty')).toBe(false);
+    const withIcon = await fixture({ type: 't', icon: 'mdi:sofa' });
+    expect(q(withIcon, '.text-divider')?.classList.contains('text-divider-empty')).toBe(false);
   });
 
   it('renders an empty centered divider with only a type', async () => {
@@ -61,5 +78,6 @@ describe('styles', () => {
     expect(css).toContain('white-space: pre-wrap');
     expect(css).toContain('--text-divider-gap');
     expect(css).not.toContain('background');
+    expect(css).toContain('.text-divider-empty');
   });
 });

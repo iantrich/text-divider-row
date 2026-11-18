@@ -29,6 +29,19 @@ export const styles = css`
     display: none;
   }
 
+  /* No text or icon: one continuous line, whatever the alignment. */
+  .text-divider-empty {
+    gap: 0;
+  }
+
+  .text-divider-empty::before {
+    display: block;
+  }
+
+  .text-divider-empty::after {
+    display: none;
+  }
+
   ha-icon {
     flex: none;
     --mdc-icon-size: 1.25em;
