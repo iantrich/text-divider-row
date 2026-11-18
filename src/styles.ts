@@ -42,6 +42,15 @@ export const styles = css`
     display: none;
   }
 
+  .text-divider-action {
+    cursor: pointer;
+  }
+
+  .text-divider-action:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+
   ha-icon {
     flex: none;
     --mdc-icon-size: 1.25em;

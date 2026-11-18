@@ -1,4 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('custom-card-helpers', () => ({ handleAction: vi.fn() }));
+
+import { handleAction } from 'custom-card-helpers';
 import { styles } from '../src/styles';
 import { fixture } from './fixture';
 
@@ -79,5 +83,58 @@ describe('styles', () => {
     expect(css).toContain('--text-divider-gap');
     expect(css).not.toContain('background');
     expect(css).toContain('.text-divider-empty');
+  });
+});
+
+describe('tap_action interactivity', () => {
+  beforeEach(() => vi.mocked(handleAction).mockClear());
+
+  const tap = { action: 'navigate', navigation_path: '/x' };
+
+  async function withHass(config: unknown) {
+    const el = await fixture(config);
+    (el as unknown as { hass: unknown }).hass = { user: { id: 'u' } };
+    await el.updateComplete;
+    return el;
+  }
+
+  it('is a focusable button when tap_action is set', async () => {
+    const el = await fixture({ type: 't', text: 'Hi', tap_action: tap });
+    const c = q(el, '.text-divider')!;
+    expect(c.getAttribute('role')).toBe('button');
+    expect(c.getAttribute('tabindex')).toBe('0');
+  });
+
+  it('click, Enter and Space each dispatch once; Space prevents default', async () => {
+    const el = await withHass({ type: 't', text: 'Hi', tap_action: tap });
+    const c = q(el, '.text-divider') as HTMLElement;
+    c.click();
+    expect(handleAction).toHaveBeenCalledTimes(1);
+    c.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+    expect(handleAction).toHaveBeenCalledTimes(2);
+    const space = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+    c.dispatchEvent(space);
+    expect(handleAction).toHaveBeenCalledTimes(3);
+    expect(space.defaultPrevented).toBe(true);
+    c.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', bubbles: true, cancelable: true }));
+    expect(handleAction).toHaveBeenCalledTimes(3);
+  });
+
+  it('is inert without tap_action or with action none', async () => {
+    for (const cfg of [{ type: 't' }, { type: 't', tap_action: { action: 'none' } }]) {
+      const el = await withHass(cfg);
+      const c = q(el, '.text-divider') as HTMLElement;
+      expect(c.hasAttribute('role')).toBe(false);
+      expect(c.hasAttribute('tabindex')).toBe(false);
+      expect(c.classList.contains('text-divider-action')).toBe(false);
+      c.click();
+    }
+    expect(handleAction).not.toHaveBeenCalled();
+  });
+
+  it('does not throw when clicked before hass is set', async () => {
+    const el = await fixture({ type: 't', tap_action: tap });
+    expect(() => (q(el, '.text-divider') as HTMLElement).click()).not.toThrow();
+    expect(handleAction).not.toHaveBeenCalled();
   });
 });

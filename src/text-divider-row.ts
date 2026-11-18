@@ -1,7 +1,9 @@
 import { LitElement, html, nothing, TemplateResult } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import type { HomeAssistant } from 'custom-card-helpers';
 import { TextDividerRowConfig } from './types';
 import { normalizeConfig } from './config';
+import { handleTap, isInteractive } from './actions';
 import { styles } from './styles';
 import { CARD_VERSION } from './const';
 
@@ -14,10 +16,23 @@ console.info(
 
 @customElement('text-divider-row')
 export class TextDividerRow extends LitElement {
+  @property({ attribute: false }) public hass?: HomeAssistant;
+
   @state() private _config?: TextDividerRowConfig;
 
   public setConfig(config: unknown): void {
     this._config = normalizeConfig(config);
+  }
+
+  private _onClick(): void {
+    if (this._config) handleTap(this, this.hass, this._config);
+  }
+
+  private _onKeydown(ev: KeyboardEvent): void {
+    if (ev.key === 'Enter' || ev.key === ' ') {
+      ev.preventDefault();
+      this._onClick();
+    }
   }
 
   protected render(): TemplateResult | typeof nothing {
@@ -29,8 +44,17 @@ export class TextDividerRow extends LitElement {
 
     const empty = !icon && text === undefined ? ' text-divider-empty' : '';
 
+    const interactive = isInteractive(this._config);
+    const cls = `text-divider text-divider-${align}${empty}${interactive ? ' text-divider-action' : ''}`;
+
     return html`
-      <div class="${`text-divider text-divider-${align}${empty}`}">
+      <div
+        class="${cls}"
+        role="${interactive ? 'button' : nothing}"
+        tabindex="${interactive ? '0' : nothing}"
+        @click="${this._onClick}"
+        @keydown="${this._onKeydown}"
+      >
         ${icon ? html`<ha-icon icon="${icon}"></ha-icon>` : nothing}
         ${text !== undefined ? html`<span class="text-divider-text">${text}</span>` : nothing}
       </div>
