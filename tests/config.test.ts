@@ -27,3 +27,17 @@ describe('normalizeConfig', () => {
     expect(normalizeConfig({ type: 't', text: null }).text).toBeUndefined();
   });
 });
+
+describe('normalizeConfig entity', () => {
+  it('keeps a non-empty string entity', () => {
+    expect(normalizeConfig({ type: 't', entity: 'light.a' }).entity).toBe('light.a');
+  });
+
+  it.each([
+    ['empty string', ''],
+    ['number', 5],
+    ['null', null],
+  ])('drops %s', (_n, v) => {
+    expect('entity' in normalizeConfig({ type: 't', entity: v })).toBe(false);
+  });
+});

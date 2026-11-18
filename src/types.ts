@@ -20,5 +20,6 @@ export interface TextDividerRowConfig {
   text?: string | number;
   icon?: string;
   align?: TextDividerAlign;
+  entity?: string;
   tap_action?: TapAction;
 }

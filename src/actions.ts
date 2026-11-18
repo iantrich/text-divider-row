@@ -24,5 +24,9 @@ export function handleTap(node: HTMLElement, hass: HomeAssistant | undefined, co
   if (!hass || !isInteractive(config) || !config.tap_action) {
     return;
   }
-  handleAction(node, hass, { tap_action: toHelperAction(config.tap_action) }, 'tap');
+  const helperConfig = {
+    tap_action: toHelperAction(config.tap_action),
+    ...(config.entity ? { entity: config.entity } : {}),
+  };
+  handleAction(node, hass, helperConfig, 'tap');
 }

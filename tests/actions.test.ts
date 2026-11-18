@@ -57,6 +57,17 @@ describe('handleTap', () => {
     );
   });
 
+  it.each(['more-info', 'toggle'] as const)('passes entity to handleAction for %s', (action) => {
+    handleTap(node, hass, { type: 't', entity: 'light.kitchen', tap_action: { action } });
+    expect(handleAction).toHaveBeenCalledWith(node, hass, { entity: 'light.kitchen', tap_action: { action } }, 'tap');
+  });
+
+  it('omits the entity key when no entity is configured', () => {
+    handleTap(node, hass, { type: 't', tap_action: { action: 'more-info' } });
+    const cfg = vi.mocked(handleAction).mock.calls[0][2];
+    expect('entity' in cfg).toBe(false);
+  });
+
   it('does nothing without tap_action', () => {
     handleTap(node, hass, { type: 't' });
     expect(handleAction).not.toHaveBeenCalled();

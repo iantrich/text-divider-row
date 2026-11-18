@@ -23,6 +23,10 @@ export function normalizeConfig(raw: unknown): TextDividerRowConfig {
     config.icon = input.icon;
   }
 
+  if (typeof input.entity === 'string' && input.entity !== '') {
+    config.entity = input.entity;
+  }
+
   if (input.tap_action && typeof input.tap_action === 'object') {
     config.tap_action = input.tap_action as TextDividerRowConfig['tap_action'];
   }
