@@ -61,4 +61,8 @@ export const styles = css`
     font-size: var(--text-divider-font-size, 14px);
     white-space: pre-wrap;
   }
+
+  .text-divider-error {
+    color: var(--error-color, #db4437);
+  }
 `;
