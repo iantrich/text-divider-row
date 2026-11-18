@@ -62,7 +62,7 @@ A visual editor is available when you add or edit the card from the dashboard UI
 | Name | Type | Requirement | Description |
 | ---- | ---- | ----------- | ----------- |
 | type | string | **Required** | `custom:text-divider-row` |
-| text | string | Optional | Text to display in the divider. Supports [templates](#templates). With no `text` and no `icon`, a plain divider line is drawn |
+| text | string | Optional | Text to display in the divider. Supports [templates](#templates). Repeated spaces and newlines are preserved. With no `text` and no `icon`, a plain divider line is drawn |
 | icon | string | Optional | Icon to display next to the text, for example `mdi:sofa`. Supports [templates](#templates) |
 | align | string | Optional | Alignment of the text and icon. Must be `left`, `center` or `right`. Default: `center` |
 | entity | string | Optional | The entity that the `more-info` and `toggle` tap actions act on |
@@ -119,6 +119,17 @@ tap_action:
     area_id: living_room
 ```
 
+Open a web page on tap:
+
+```yaml
+type: custom:text-divider-row
+text: Documentation
+icon: mdi:book-open-variant
+tap_action:
+  action: url
+  url_path: https://www.home-assistant.io
+```
+
 Open the more-info dialog of an entity:
 
 ```yaml
@@ -139,9 +150,7 @@ text: "Sun is {{ states('sun.sun') }}"
 icon: "{{ 'mdi:weather-sunny' if is_state('sun.sun', 'above_horizon') else 'mdi:weather-night' }}"
 ```
 
-If a template fails to render, the error message is shown in the divider in the error color. If a template renders to an empty result, a plain line is shown.
-
-Repeated spaces in `text` are preserved.
+If a template fails to render, the error message is shown in the divider in the error color. If `text` and `icon` both end up empty, a plain line is shown (an icon still shows if only the text is empty).
 
 ## Theme Variables
 
@@ -153,16 +162,18 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 | `text-divider-color`     | `secondary-text-color` | Divider color                                 |
 | `text-divider-font-size` | `14px`                 | Font size                                     |
 | `text-divider-line-size` | `1px`                  | Line size                                     |
-| `text-divider-margin`    | `1em 0`                | Divider margin                                |
+| `text-divider-margin`    | `0.5em 0`              | Divider margin                                |
 | `text-divider-gap`       | `1em`                  | Space between the text or icon and the lines  |
 
-Error text uses the theme's `error-color`.
+Error text uses the theme's `error-color`. The default margin matches the vertical spacing of 1.x; set `text-divider-margin` to `1em 0` for more space around the divider.
 
 ## Upgrading from 1.x
 
 - No YAML changes are needed. Existing configurations keep working.
 - The text no longer has a background fill, so transparent themes and standalone use just work.
 - There is a new visual editor, plus the new `icon`, `entity`, `tap_action` and `text-divider-gap` options, and templates.
+- The `.text-divider-container` wrapper is gone. `.text-divider` is now a flex `div` (not the `h2`), and the lines are drawn with `::before` and `::after`. The default vertical spacing is `0.5em 0` to match 1.x.
+- If the card is also installed under an old `/local/text-divider-row.js` resource, remove the old resource. Loading both causes an error and the old one wins.
 - If you use [card-mod](https://github.com/thomasloven/lovelace-card-mod) and targeted the old markup (`h2` or `.text-divider span`), switch to `.text-divider` and `.text-divider-text`:
 
 ```yaml
@@ -179,6 +190,16 @@ Error text uses the theme's `error-color`.
   card_mod:
     style: |
       .text-divider-text { color: red; }
+```
+
+If you styled the line with `border-bottom` on `.text-divider`, target the pseudo-elements instead:
+
+```yaml
+- type: custom:text-divider-row
+  text: Lights
+  card_mod:
+    style: |
+      .text-divider::before, .text-divider::after { border-top-color: red; }
 ```
 
 ## [Troubleshooting](https://github.com/thomasloven/hass-config/wiki/Lovelace-Plugins)
