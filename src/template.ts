@@ -8,6 +8,7 @@ export function isTemplate(value: unknown): value is string {
 interface RenderTemplateMessage {
   result?: unknown;
   error?: unknown;
+  level?: unknown;
 }
 
 function errorMessage(err: unknown): string {
@@ -56,6 +57,8 @@ export class TemplateSubscription {
         (msg) => {
           if (!current()) return;
           if (msg.error !== undefined && msg.error !== null) {
+            // WARNING events are advisory; the template still renders.
+            if (msg.level === 'WARNING') return;
             this._onError(errorMessage(msg.error));
           } else {
             this._onResult(msg.result === undefined || msg.result === null ? '' : String(msg.result));

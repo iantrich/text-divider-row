@@ -100,4 +100,15 @@ describe('text-divider-row-editor', () => {
     );
     expect(config).toEqual({ type: 'custom:text-divider-row' });
   });
+
+  it('falls back to the configured type, then the default, when value has none', async () => {
+    const el = await editorFixture({ type: 'custom:text-divider-row', text: 'Old' });
+    let config: Record<string, unknown> = {};
+    el.addEventListener('config-changed', (e) => (config = (e as CustomEvent).detail.config));
+    form(el).dispatchEvent(new CustomEvent('value-changed', { detail: { value: { text: 'New' } } }));
+    expect(config.type).toBe('custom:text-divider-row');
+    (el as unknown as { _config?: unknown })._config = undefined;
+    form(el).dispatchEvent(new CustomEvent('value-changed', { detail: { value: { text: 'X' } } }));
+    expect(config.type).toBe('custom:text-divider-row');
+  });
 });

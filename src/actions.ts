@@ -7,14 +7,26 @@ import type { TapAction, TextDividerRowConfig } from './types';
  * onto it. Delete once the library handles `perform-action` itself.
  */
 export function toHelperAction(action: TapAction): ActionConfig {
+  if (action.action === 'call-service') {
+    // Older configs use `service_data`; the helper reads `data`.
+    const { service_data: legacy, ...rest } = action as typeof action & { service_data?: unknown };
+    if (rest.data === undefined && legacy && typeof legacy === 'object') {
+      return { ...rest, data: legacy } as ActionConfig;
+    }
+    return action;
+  }
   if (action.action !== 'perform-action') {
     return action;
   }
   // Carry over every other field (confirmation, data, target, ...) so the shim is transparent.
   const mapped: Record<string, unknown> = { action: 'call-service', service: action.perform_action };
   for (const [key, value] of Object.entries(action)) {
-    if (key !== 'action' && key !== 'perform_action' && value !== undefined) mapped[key] = value;
+    if (key !== 'action' && key !== 'perform_action' && key !== 'service_data' && value !== undefined) {
+      mapped[key] = value;
+    }
   }
+  const legacy = (action as { service_data?: unknown }).service_data;
+  if (mapped.data === undefined && legacy && typeof legacy === 'object') mapped.data = legacy;
   return mapped as unknown as ActionConfig;
 }
 

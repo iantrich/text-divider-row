@@ -196,4 +196,20 @@ describe('TemplateSubscription', () => {
     await Promise.resolve();
     expect(unsub).toHaveBeenCalledTimes(1);
   });
+
+  it('ignores WARNING events but reports ERROR and level-less errors', async () => {
+    const f = fakeHass();
+    const onResult = vi.fn();
+    const onError = vi.fn();
+    const sub = new TemplateSubscription(onResult, onError);
+    await sub.subscribe(f.hass, '{{ 1 }}', { config });
+    f.callbacks[0]({ error: 'careful', level: 'WARNING' });
+    expect(onError).not.toHaveBeenCalled();
+    expect(onResult).not.toHaveBeenCalled();
+    f.callbacks[0]({ error: 'bad', level: 'ERROR' });
+    expect(onError).toHaveBeenCalledWith('bad');
+    f.callbacks[0]({ error: 'worse' });
+    expect(onError).toHaveBeenCalledWith('worse');
+    expect(onError).toHaveBeenCalledTimes(2);
+  });
 });

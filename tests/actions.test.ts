@@ -41,10 +41,31 @@ describe('toHelperAction', () => {
     expect(out).toStrictEqual({ action: 'call-service', service: 'a.b' });
   });
 
+  it.each([
+    ['perform-action', { action: 'perform-action', perform_action: 'a.b' }],
+    ['call-service', { action: 'call-service', service: 'a.b' }],
+  ])('maps service_data to data for %s', (_name, base) => {
+    const out = toHelperAction({ ...base, service_data: { x: 1 } } as never) as unknown as Record<string, unknown>;
+    expect(out.data).toEqual({ x: 1 });
+    expect('service_data' in out).toBe(false);
+    expect(out.action).toBe('call-service');
+  });
+
+  it.each([
+    ['perform-action', { action: 'perform-action', perform_action: 'a.b' }],
+    ['call-service', { action: 'call-service', service: 'a.b' }],
+  ])('data wins over service_data for %s', (_name, base) => {
+    const out = toHelperAction({ ...base, data: { y: 2 }, service_data: { x: 1 } } as never) as unknown as Record<
+      string,
+      unknown
+    >;
+    expect(out.data).toEqual({ y: 2 });
+  });
+
   it('returns other actions unchanged', () => {
     const nav = { action: 'navigate', navigation_path: '/x' } as const;
     expect(toHelperAction(nav)).toBe(nav);
-    const cs = { action: 'call-service', service: 'a.b' } as const;
+    const cs = { action: 'call-service', service: 'a.b', data: { x: 1 } } as const;
     expect(toHelperAction(cs)).toBe(cs);
   });
 });

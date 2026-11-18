@@ -52,7 +52,7 @@ export class TextDividerRowEditor extends LitElement {
       if (val === '' || val === undefined) continue;
       config[key] = val;
     }
-    config.type = value.type ?? this._config?.type;
+    config.type = value.type ?? this._config?.type ?? 'custom:text-divider-row';
     this.dispatchEvent(
       new CustomEvent('config-changed', {
         detail: { config },
