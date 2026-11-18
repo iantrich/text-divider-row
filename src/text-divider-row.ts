@@ -1,4 +1,5 @@
-import { LitElement, html, customElement, property, TemplateResult, css, CSSResult } from 'lit-element';
+import { LitElement, html, css, TemplateResult, CSSResult } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { TextDividerRowConfig } from './types';
 import { CARD_VERSION } from './const';
 
@@ -10,8 +11,8 @@ console.info(
 );
 
 @customElement('text-divider-row')
-class TextDividerRow extends LitElement {
-  @property() private _config?: TextDividerRowConfig;
+export class TextDividerRow extends LitElement {
+  @state() private _config?: TextDividerRowConfig;
 
   public setConfig(config: TextDividerRowConfig): void {
     if (!config || !config.text) {

@@ -1,1 +1,2 @@
-export const CARD_VERSION = '1.4.1';
+declare const __CARD_VERSION__: string;
+export const CARD_VERSION: string = __CARD_VERSION__;
