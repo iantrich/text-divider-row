@@ -86,6 +86,18 @@ describe('styles', () => {
     expect(css).toContain('.text-divider-empty');
   });
 
+  it('keeps card-mod config on the element so card-mod can style the standalone card (#32)', async () => {
+    const cardMod = { style: ':host { --text-divider-color: green; }' };
+    const el = await fixture({ type: 't', text: 'Hi', card_mod: cardMod });
+    expect((el as unknown as { _config: { card_mod?: unknown } })._config.card_mod).toEqual(cardMod);
+  });
+
+  it('uses one line height for text and empty dividers so rows are the same height (#20)', () => {
+    const css = styles.cssText.replace(/\s+/g, ' ');
+    expect(css).toContain('min-height: calc(var(--text-divider-font-size, 14px) * 1.6)');
+    expect(css).toMatch(/\.text-divider-text \{[^}]*line-height: 1\.6;/);
+  });
+
   it('restores the 1.x look: bold text, 0.5em default margin, stubs, wrapping', () => {
     const css = styles.cssText.replace(/\s+/g, ' ');
     const rule = (sel: string) => {

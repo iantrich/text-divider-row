@@ -202,20 +202,23 @@ entities:
     text: Lights
 ```
 
-card-mod cannot style the divider when it is used as a standalone card, because the card has no `ha-card` element for card-mod to attach to. Wrap it in card-mod's `custom:mod-card`, or set the theme variables on a parent card such as a `vertical-stack`:
+It also works on the divider as a standalone card. `:host` is the card itself, so use it for the theme variables and for the card's own box (background, padding, radius):
 
 ```yaml
-type: custom:mod-card
-card:
-  type: custom:text-divider-row
-  text: Upstairs
+type: custom:text-divider-row
+text: Upstairs
 card_mod:
   style: |
-    ha-card {
-      background: lavender;
-      padding: 8px;
+    :host {
+      --text-divider-color: green;
+      --text-divider-font-size: 18px;
+      background: linear-gradient(90deg, teal, transparent);
+      padding: 4px 12px;
+      border-radius: 8px;
     }
 ```
+
+Prefer the theme variables over selectors such as `.text-divider-text` for properties the card sets itself (font size, font weight): on a standalone card card-mod's style does not win against the card's own rule for those. Properties the card does not set, such as `color` on the text, can be targeted directly.
 
 ## Upgrading from 1.x
 

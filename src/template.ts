@@ -24,6 +24,15 @@ function errorMessage(err: unknown): string {
   return message.trim() !== '' ? message : 'Template error';
 }
 
+/**
+ * HA renders templates to native types. Lists and objects would become "1,2,3" and
+ * "[object Object]" with String(), so show them as JSON.
+ */
+function formatResult(result: unknown): string {
+  if (result === undefined || result === null) return '';
+  return typeof result === 'object' ? JSON.stringify(result) : String(result);
+}
+
 function safeCall(unsub: () => unknown): void {
   try {
     // home-assistant-js-websocket unsubs return a promise that can reject
@@ -61,7 +70,7 @@ export class TemplateSubscription {
             if (msg.level === 'WARNING') return;
             this._onError(errorMessage(msg.error));
           } else {
-            this._onResult(msg.result === undefined || msg.result === null ? '' : String(msg.result));
+            this._onResult(formatResult(msg.result));
           }
         },
         // report_errors makes HA send `{error, level}` events instead of only logging.

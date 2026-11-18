@@ -89,6 +89,23 @@ describe('TemplateSubscription', () => {
     expect(onResult).toHaveBeenLastCalledWith('42');
   });
 
+  it('formats lists and objects as JSON and everything else with String()', async () => {
+    const f = fakeHass();
+    const onResult = vi.fn();
+    const sub = new TemplateSubscription(onResult, vi.fn());
+    await sub.subscribe(f.hass, '{{ x }}', { config });
+    f.callbacks[0]({ result: [1, 2, 3] });
+    expect(onResult).toHaveBeenLastCalledWith('[1,2,3]');
+    f.callbacks[0]({ result: { a: 1, b: [true] } });
+    expect(onResult).toHaveBeenLastCalledWith('{"a":1,"b":[true]}');
+    f.callbacks[0]({ result: 0 });
+    expect(onResult).toHaveBeenLastCalledWith('0');
+    f.callbacks[0]({ result: false });
+    expect(onResult).toHaveBeenLastCalledWith('false');
+    f.callbacks[0]({ result: null });
+    expect(onResult).toHaveBeenLastCalledWith('');
+  });
+
   it('calls onError with the rejection message when subscribeMessage rejects', async () => {
     const onError = vi.fn();
     const errorHass = {

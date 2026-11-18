@@ -11,7 +11,8 @@ export const styles = css`
     align-items: center;
     gap: var(--text-divider-gap, 1em);
     margin: var(--text-divider-margin, 0.5em 0);
-    min-height: 1.5em;
+    /* Same as the text's line height, so a divider with no text is as tall as one with text. */
+    min-height: calc(var(--text-divider-font-size, 14px) * 1.6);
     color: var(--text-divider-color, var(--secondary-text-color));
   }
 
@@ -61,6 +62,7 @@ export const styles = css`
     min-width: 0;
     overflow-wrap: anywhere;
     font-size: var(--text-divider-font-size, 14px);
+    line-height: 1.6;
     font-weight: bold;
     white-space: pre-wrap;
   }

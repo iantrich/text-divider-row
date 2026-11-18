@@ -23,6 +23,8 @@ export interface TextDividerRowConfig {
   align?: TextDividerAlign;
   entity?: string;
   tap_action?: TapAction;
+  /** Not used by the card. card-mod reads it from the card element's config, so it must be kept. */
+  card_mod?: Record<string, unknown>;
 }
 
 export interface CustomCardEntry {

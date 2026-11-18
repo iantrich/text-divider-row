@@ -28,12 +28,40 @@ describe('toHelperAction', () => {
     });
   });
 
-  it.each([[true], [{ text: 'Sure?' }]])('preserves confirmation %j', (confirmation) => {
+  it('keeps a custom confirmation text', () => {
+    const confirmation = { text: 'Sure?' };
     expect(toHelperAction({ action: 'perform-action', perform_action: 'a.b', confirmation })).toStrictEqual({
       action: 'call-service',
       service: 'a.b',
       confirmation,
     });
+  });
+
+  it.each([
+    ['true', true, { text: 'Are you sure you want to run action "a.b"?' }],
+    ['an empty object', {}, { text: 'Are you sure you want to run action "a.b"?' }],
+    [
+      'exemptions without text',
+      { exemptions: [{ user: 'u' }] },
+      { exemptions: [{ user: 'u' }], text: 'Are you sure you want to run action "a.b"?' },
+    ],
+  ])('names the action in the default confirmation when given %s', (_name, confirmation, expected) => {
+    expect(toHelperAction({ action: 'perform-action', perform_action: 'a.b', confirmation })).toStrictEqual({
+      action: 'call-service',
+      service: 'a.b',
+      confirmation: expected,
+    });
+  });
+
+  it('adds the default confirmation text to a legacy call-service too', () => {
+    const out = toHelperAction({ action: 'call-service', service: 'a.b', confirmation: true } as never);
+    expect(out).toMatchObject({ confirmation: { text: 'Are you sure you want to run action "a.b"?' } });
+  });
+
+  it('does not invent a confirmation when none is configured', () => {
+    expect('confirmation' in (toHelperAction({ action: 'perform-action', perform_action: 'a.b' }) as object)).toBe(
+      false,
+    );
   });
 
   it('omits absent data and target', () => {

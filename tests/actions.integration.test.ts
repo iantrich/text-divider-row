@@ -42,6 +42,7 @@ describe('perform-action confirmation with the real custom-card-helpers', () => 
   it('does not call the service when the user declines', () => {
     const { confirmSpy, callService } = run(false);
     expect(confirmSpy).toHaveBeenCalledTimes(1);
+    expect(confirmSpy).toHaveBeenCalledWith('Are you sure you want to run action "light.turn_on"?');
     expect(callService).not.toHaveBeenCalled();
   });
 
