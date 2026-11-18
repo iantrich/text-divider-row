@@ -6,6 +6,7 @@ import { normalizeConfig } from './config';
 import { handleTap, isInteractive } from './actions';
 import { styles } from './styles';
 import { CARD_VERSION } from './const';
+import './editor';
 
 /* eslint no-console: 0 */
 console.info(
@@ -61,5 +62,31 @@ export class TextDividerRow extends LitElement {
     `;
   }
 
+  public static async getConfigElement(): Promise<HTMLElement> {
+    return document.createElement('text-divider-row-editor');
+  }
+
+  public static getStubConfig(): TextDividerRowConfig {
+    return { type: 'custom:text-divider-row', text: 'Divider' };
+  }
+
+  public getGridOptions(): { columns: 'full'; rows: 1 } {
+    return TextDividerRow.getGridOptions();
+  }
+
+  public static getGridOptions(): { columns: 'full'; rows: 1 } {
+    return { columns: 'full', rows: 1 };
+  }
+
   static styles = styles;
+}
+
+window.customCards = window.customCards || [];
+if (!window.customCards.some((card) => card.type === 'text-divider-row')) {
+  window.customCards.push({
+    type: 'text-divider-row',
+    name: 'Text Divider Row',
+    description: 'A divider line with optional text and icon, usable as an entities row or a card.',
+    preview: true,
+  });
 }
