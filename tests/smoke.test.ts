@@ -1,18 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import '../src/text-divider-row';
 import { CARD_VERSION } from '../src/const';
+import { fixture } from './fixture';
 
 describe('text-divider-row smoke test', () => {
   it('renders the configured text', async () => {
-    const el = document.createElement('text-divider-row') as HTMLElement & {
-      setConfig(config: { type: string; text: string }): void;
-      updateComplete: Promise<boolean>;
-    };
-    el.setConfig({ type: 'custom:text-divider-row', text: 'Hi' });
-    document.body.appendChild(el);
-    await el.updateComplete;
+    const el = await fixture({ type: 'custom:text-divider-row', text: 'Hi' });
 
-    const span = el.shadowRoot?.querySelector('h2 span');
+    const span = el.shadowRoot?.querySelector('.text-divider-text');
     expect(span?.textContent).toBe('Hi');
   });
 

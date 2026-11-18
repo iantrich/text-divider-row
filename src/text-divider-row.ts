@@ -1,6 +1,8 @@
-import { LitElement, html, css, TemplateResult, CSSResult } from 'lit';
+import { LitElement, html, nothing, TemplateResult } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { TextDividerRowConfig } from './types';
+import { normalizeConfig } from './config';
+import { styles } from './styles';
 import { CARD_VERSION } from './const';
 
 /* eslint no-console: 0 */
@@ -14,89 +16,24 @@ console.info(
 export class TextDividerRow extends LitElement {
   @state() private _config?: TextDividerRowConfig;
 
-  public setConfig(config: TextDividerRowConfig): void {
-    if (!config || !config.text) {
-      throw new Error('Error in card configuration.');
-    }
-
-    this._config = config;
+  public setConfig(config: unknown): void {
+    this._config = normalizeConfig(config);
   }
 
-  protected getClass(): string {
-    const allowedValues = ['center', 'left', 'right'];
-    if (this._config && this._config.align) {
-      if (allowedValues.includes(this._config.align)) {
-        return `text-divider text-divider-${this._config.align}`;
-      }
-    }
-    return 'text-divider text-divider-center';
-  }
-
-  protected render(): TemplateResult | void {
+  protected render(): TemplateResult | typeof nothing {
     if (!this._config) {
-      return html``;
+      return nothing;
     }
+
+    const { align, icon, text } = this._config;
 
     return html`
-      <div class="text-divider-container">
-        <h2 class="${this.getClass()}">
-          <span>${this._config.text}</span>
-        </h2>
+      <div class="text-divider text-divider-${align}">
+        ${icon ? html`<ha-icon icon="${icon}"></ha-icon>` : nothing}
+        ${text !== undefined ? html`<span class="text-divider-text">${text}</span>` : nothing}
       </div>
     `;
   }
 
-  static get styles(): CSSResult {
-    return css`
-      :host {
-        display: block;
-        position: relative;
-        --background: var(--ha-card-background, var(--card-background-color));
-        --divider-color: var(--text-divider-color, var(--secondary-text-color));
-        --font-size: var(--text-divider-font-size, 14px);
-        --line-size: var(--text-divider-line-size, 1px);
-      }
-
-      .text-divider {
-        width: 100%;
-        border-bottom: var(--line-size) solid var(--divider-color);
-        line-height: 0;
-        margin: 10px 0 20px;
-      }
-
-      .text-divider-container {
-        margin: var(--text-divider-margin, 1em 0);
-      }
-
-      .text-divider-center {
-        text-align: center;
-      }
-
-      .text-divider-left {
-        text-align: left;
-      }
-
-      .text-divider-right {
-        text-align: right;
-      }
-
-      .text-divider span {
-        color: var(--divider-color);
-        font-size: var(--font-size);
-        background: var(--background);
-        padding: 1px 1em;
-      }
-      .text-divider-center span {
-        margin: 0px;
-      }
-
-      .text-divider-left span {
-        margin: 0 0 0 1em;
-      }
-
-      .text-divider-right span {
-        margin: 0 1em 0 0;
-      }
-    `;
-  }
+  static styles = styles;
 }
