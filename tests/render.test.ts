@@ -222,6 +222,7 @@ describe('templates', () => {
       type: 'render_template',
       template: '{{ config.align }}',
       variables: { config: normalizeConfig(raw) },
+      report_errors: true,
     });
   });
 
@@ -250,6 +251,23 @@ describe('templates', () => {
     await flush(el);
     expect(textOf(el)).toBe('ok');
     expect(q(el, '.text-divider-text')?.classList.contains('text-divider-error')).toBe(false);
+  });
+
+  it('renders a runtime error event, then the recovered value', async () => {
+    const f = fakeHass();
+    const el = await mount({ type: 't', text: '{{ states("x") | int }}' }, f.hass);
+    f.subs[0].callback({ result: '1', listeners: {} });
+    await flush(el);
+    expect(textOf(el)).toBe('1');
+    f.subs[0].callback({ error: 'invalid literal', level: 'ERROR' });
+    await flush(el);
+    expect(q(el, '.text-divider-text.text-divider-error')?.textContent).toBe('invalid literal');
+    f.subs[0].callback({ result: '7', listeners: {} });
+    await flush(el);
+    expect(textOf(el)).toBe('7');
+    expect(q(el, '.text-divider-error')).toBeNull();
+    expect(f.subscribeMessage).toHaveBeenCalledTimes(1);
+    expect(f.subs[0].unsub).not.toHaveBeenCalled();
   });
 
   it('shows the rejection message when subscribing fails', async () => {

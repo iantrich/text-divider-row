@@ -61,7 +61,8 @@ export class TemplateSubscription {
             this._onResult(msg.result === undefined || msg.result === null ? '' : String(msg.result));
           }
         },
-        { type: 'render_template', template, variables },
+        // report_errors makes HA send `{error, level}` events instead of only logging.
+        { type: 'render_template', template, variables, report_errors: true },
       );
       if (current()) {
         this._unsub = unsub;

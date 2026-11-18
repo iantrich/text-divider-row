@@ -54,7 +54,23 @@ describe('TemplateSubscription', () => {
       type: 'render_template',
       template: '{{ 1 }}',
       variables: { config },
+      report_errors: true,
     });
+  });
+
+  it('recovers from an error event when a later result arrives', async () => {
+    const f = fakeHass();
+    const onResult = vi.fn();
+    const onError = vi.fn();
+    const sub = new TemplateSubscription(onResult, onError);
+    await sub.subscribe(f.hass, '{{ states("x") | int }}', { config });
+    f.callbacks[0]({ error: 'invalid literal', level: 'ERROR' });
+    expect(onError).toHaveBeenCalledWith('invalid literal');
+    expect(f.unsubs[0]).not.toHaveBeenCalled();
+    f.callbacks[0]({ result: '5', listeners: {} });
+    expect(onResult).toHaveBeenCalledWith('5');
+    expect(f.subscribeMessage).toHaveBeenCalledTimes(1);
+    expect(f.unsubs[0]).not.toHaveBeenCalled();
   });
 
   it('passes result to onResult and error to onError', async () => {
