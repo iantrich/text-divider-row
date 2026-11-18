@@ -1,7 +1,37 @@
 views:
-  - cards:
+  - title: Examples
+    cards:
       - type: entities
         entities:
           - entity: alarm_control_panel.alarm
           - type: "custom:text-divider-row"
             text: divider
+          - type: "custom:text-divider-row"
+            text: Left
+            align: left
+          - type: "custom:text-divider-row"
+            text: Center
+            align: center
+          - type: "custom:text-divider-row"
+            text: Right
+            align: right
+          - type: "custom:text-divider-row"
+            icon: "mdi:sofa"
+          - type: "custom:text-divider-row"
+          - type: "custom:text-divider-row"
+            text: "Sun is {{ states('sun.sun') }}"
+            icon: "mdi:weather-sunny"
+          - type: "custom:text-divider-row"
+            text: Go to second view
+            icon: "mdi:arrow-right"
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/1
+      - type: "custom:text-divider-row"
+        text: Standalone divider
+        icon: "mdi:sofa"
+        align: left
+  - title: Second
+    cards:
+      - type: "custom:text-divider-row"
+        text: Second view

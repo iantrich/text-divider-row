@@ -1,6 +1,6 @@
 {
     "name": "text-divider-row",
-    "version": "1.4.0",
+    "version": "2.0.0",
     "description": "Lovelace text-divider-row",
     "keywords": [
         "home-assistant",
@@ -14,36 +14,33 @@
     "repository": "git@github.com:iantrich/text-divider-row.git",
     "author": "Ian Richardson <iantrich@gmail.com>",
     "license": "MIT",
-    "dependencies": {
-        "home-assistant-js-websocket": "^4.4.0",
-        "lit-element": "^2.3.1",
-        "lit-html": "^1.2.1"
-    },
     "devDependencies": {
-        "@babel/core": "^7.10.3",
-        "@babel/plugin-proposal-class-properties": "^7.10.1",
-        "@babel/plugin-proposal-decorators": "^7.10.3",
-        "@typescript-eslint/eslint-plugin": "^2.34.0",
-        "@typescript-eslint/parser": "^2.34.0",
-        "eslint": "^6.6.0",
-        "eslint-config-airbnb-base": "^14.2.0",
-        "eslint-config-prettier": "^6.11.0",
-        "eslint-plugin-import": "^2.21.2",
-        "eslint-plugin-prettier": "^3.1.4",
-        "prettier": "^1.18.2",
-        "rollup": "^1.26.0",
-        "rollup-plugin-babel": "^4.3.3",
-        "rollup-plugin-node-resolve": "^5.2.0",
-        "rollup-plugin-serve": "^1.0.1",
-        "rollup-plugin-terser": "^5.1.2",
-        "rollup-plugin-typescript2": "^0.24.3",
-        "rollup-plugin-uglify": "^6.0.3",
-        "typescript": "^3.9.5"
+        "@eslint/js": "^9.39.5",
+        "@rollup/plugin-node-resolve": "^16.0.3",
+        "@rollup/plugin-replace": "^6.0.3",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@rollup/plugin-typescript": "^12.3.1",
+        "eslint": "^9.39.5",
+        "eslint-config-prettier": "^10.1.8",
+        "jsdom": "^26.1.0",
+        "prettier": "^3.10.1",
+        "rollup": "^4.68.5",
+        "rollup-plugin-serve": "^1.1.1",
+        "tslib": "^2.9.1",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.73.0",
+        "vitest": "^3.2.7"
     },
     "scripts": {
         "start": "rollup -c rollup.config.dev.js --watch",
-        "build": "npm run lint && npm run rollup",
-        "lint": "eslint src/*.ts",
-        "rollup": "rollup -c"
-    }
+        "lint": "eslint src tests && prettier --check src tests",
+        "test": "vitest run",
+        "build": "npm run lint && npm run typecheck && npm test && rollup -c",
+        "typecheck": "tsc -p tsconfig.test.json"
+    },
+    "dependencies": {
+        "custom-card-helpers": "^2.2.1",
+        "lit": "^3.3.3"
+    },
+    "type": "module"
 }
