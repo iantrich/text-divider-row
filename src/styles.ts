@@ -3,40 +3,53 @@ import { css } from 'lit';
 export const styles = css`
   :host {
     display: block;
-    container-type: inline-size;
   }
 
   .text-divider {
+    --_gap: var(--text-divider-gap, 1em);
     display: flex;
     align-items: center;
-    gap: var(--text-divider-gap, 1em);
     margin: var(--text-divider-margin, 0.5em 0);
     /* Same as the text's line height, so a divider with no text is as tall as one with text. */
     min-height: calc(var(--text-divider-font-size, 14px) * 1.6);
     color: var(--text-divider-color, var(--secondary-text-color));
   }
 
+  /*
+   * Each line includes its gap to the text; clip-path hides the gap part of the border. Lines shrink
+   * far faster than the text, so in a narrow card the lines go first, then the gaps, and only then
+   * does the text wrap. A short label keeps its lines as long as there is room for them.
+   */
   .text-divider::before,
   .text-divider::after {
     content: '';
-    flex: 1;
-    min-width: 1em;
+    flex: 1 1000 var(--_gap);
+    min-width: 0;
     border-top: var(--text-divider-line-size, 1px) solid var(--text-divider-color, var(--secondary-text-color));
+  }
+
+  .text-divider::before {
+    clip-path: inset(-1em var(--_gap) -1em 0);
+  }
+
+  .text-divider::after {
+    clip-path: inset(-1em 0 -1em var(--_gap));
   }
 
   .text-divider-left::before,
   .text-divider-right::after {
-    flex: 0 0 1em;
+    flex: 0 1000 calc(1em + var(--_gap));
+  }
+
+  /* The icon and the text are spaced like the text and a line. */
+  ha-icon + .text-divider-text {
+    margin-inline-start: var(--_gap);
   }
 
   /* No text or icon: one continuous line, whatever the alignment. */
-  .text-divider-empty {
-    gap: 0;
-  }
-
   .text-divider-empty::before {
-    display: block;
     flex: 1;
+    clip-path: none;
   }
 
   .text-divider-empty::after {
@@ -69,29 +82,5 @@ export const styles = css`
 
   .text-divider-error {
     color: var(--error-color, #db4437);
-  }
-
-  /*
-   * Very narrow containers (a few columns side by side): the lines and gaps would reserve more
-   * room than the text gets, so drop the lines and let the text use the width. An empty divider
-   * has no text to protect and keeps its one line.
-   */
-  @container (max-width: 11em) {
-    .text-divider:not(.text-divider-empty)::before,
-    .text-divider:not(.text-divider-empty)::after {
-      display: none;
-    }
-
-    .text-divider-left {
-      justify-content: flex-start;
-    }
-
-    .text-divider-center {
-      justify-content: center;
-    }
-
-    .text-divider-right {
-      justify-content: flex-end;
-    }
   }
 `;

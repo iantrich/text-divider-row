@@ -157,6 +157,14 @@ If a template fails to render, the error message is shown in the divider in the 
 The following variables are available and can be set in your theme to change the appearance of the divider.
 Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically anything supported by CSS.
 
+Put them in the theme your dashboard uses (the profile or dashboard theme), written without the leading `--`. The divider has no `theme:` option of its own, so adding `theme:` to a divider's config does nothing; to change one divider or one card, use [card-mod](#styling-with-card-mod).
+
+```yaml
+my-theme:
+  text-divider-color: dodgerblue
+  text-divider-margin: "-4px 0"
+```
+
 | name                     | Default                | Description                                   |
 | ------------------------ | ---------------------- | --------------------------------------------- |
 | `text-divider-color`     | `secondary-text-color` | Divider color                                 |
@@ -165,11 +173,13 @@ Can be specified by color name, hexadecimal, rgb, rgba, hsl, hsla, basically any
 | `text-divider-margin`    | `0.5em 0`              | Divider margin                                |
 | `text-divider-gap`       | `1em`                  | Space between the text or icon and the lines  |
 
-Error text uses the theme's `error-color`. The default margin matches the vertical spacing of 1.x; set `text-divider-margin` to `1em 0` for more space around the divider.
+Error text uses the theme's `error-color`.
+
+In an entities card, `text-divider-margin` overlaps (collapses with) the card's own 8px spacing between rows, as it did in 1.x, so the default `0.5em 0` gives the same spacing as 1.x. Set it to `1em 0` for more space. Values between 0 and 8px look the same as the default; use a negative value such as `-4px 0` to pull the neighboring rows closer.
 
 ### Narrow cards
 
-Long text wraps instead of overflowing. In a very narrow card (under about 11em, roughly 150px, such as several cards side by side on a phone) the lines are dropped so the text can use the whole width; the text keeps its `align` position. A divider with no text and no icon always keeps its line.
+Long text wraps instead of overflowing. When a card gets narrow (several cards side by side on a phone), the lines get shorter first, then the gaps beside the text, and only then does the text wrap, so a short label keeps its lines for as long as there is room for them. A divider with no text and no icon always keeps its line.
 
 ## Styling with card-mod
 

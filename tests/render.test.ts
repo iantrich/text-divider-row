@@ -112,52 +112,52 @@ describe('styles', () => {
     expect(text).toContain('min-width: 0');
     expect(text).toContain('overflow-wrap: anywhere');
     expect(css).toContain('var(--text-divider-margin, 0.5em 0)');
-    expect(rule('.text-divider-left::before')).toContain('flex: 0 0 1em');
-    expect(rule('.text-divider-right::after')).toContain('flex: 0 0 1em');
+    expect(rule('.text-divider-left::before')).toContain('flex: 0 1000 calc(1em + var(--_gap))');
+    expect(rule('.text-divider-right::after')).toContain('flex: 0 1000 calc(1em + var(--_gap))');
     expect(rule('.text-divider-left::before')).not.toContain('display: none');
     expect(rule('.text-divider-right::after')).not.toContain('display: none');
-    expect(css).toContain('min-width: 1em');
     expect(css).toContain('--mdc-icon-size: calc(var(--text-divider-font-size, 14px) * 1.25)');
   });
 
-  describe('narrow containers (#38)', () => {
-    const css = styles.cssText.replace(/\s+/g, ' ');
+  describe('spacing and narrow cards (#38, #44)', () => {
+    const css = styles.cssText.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ');
+    const rule = (sel: string) =>
+      [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)]
+        .filter((m) => m[1].split(',').some((part) => part.trim() === sel))
+        .map((m) => m[2])
+        .join(';');
 
-    // Returns the body of the first `@container (...) { ... }` block, matching nested braces.
-    const containerBlock = (): string => {
-      const start = css.indexOf('@container');
-      if (start === -1) return '';
-      const open = css.indexOf('{', start);
-      let depth = 0;
-      for (let i = open; i < css.length; i++) {
-        if (css[i] === '{') depth++;
-        if (css[i] === '}' && --depth === 0) return css.slice(open + 1, i);
-      }
-      return '';
-    };
-
-    it('makes the host a size container so the layout can react to its own width', () => {
-      expect(css).toMatch(/:host \{[^}]*display: block;[^}]*container-type: inline-size;[^}]*\}/);
+    it('is not a size container, so its margins collapse with the entities card row margins (#44)', () => {
+      expect(css).not.toContain('container-type');
+      expect(css).not.toContain('@container');
     });
 
-    it('drops the lines below 11em so the text gets the room', () => {
-      expect(css).toContain('@container (max-width: 11em)');
-      const block = containerBlock();
-      expect(block).toMatch(/\.text-divider:not\(\.text-divider-empty\)::before[^{}]*\{[^}]*display: none/);
-      expect(block).toMatch(/\.text-divider:not\(\.text-divider-empty\)::after[^{}]*\{[^}]*display: none/);
+    it('never hides the lines by width alone, so short labels keep them (#44)', () => {
+      const hidingRules = [...css.matchAll(/([^{}]+)\{([^}]*display: none[^}]*)\}/g)].map((m) => m[1].trim());
+      expect(hidingRules).toEqual(['.text-divider-empty::after']);
     });
 
-    it('keeps the aligned position once the lines are gone', () => {
-      const block = containerBlock();
-      expect(block).toMatch(/\.text-divider-left\s*\{[^}]*justify-content: flex-start/);
-      expect(block).toMatch(/\.text-divider-right\s*\{[^}]*justify-content: flex-end/);
-      expect(block).toMatch(/\.text-divider-center\s*\{[^}]*justify-content: center/);
+    it('lets the lines and their gaps give way to the text first', () => {
+      const line = rule('.text-divider::before');
+      expect(line).toContain('flex: 1 1000 var(--_gap)');
+      expect(line).toContain('min-width: 0');
+      expect(rule('.text-divider')).toContain('--_gap: var(--text-divider-gap, 1em)');
+      expect(rule('.text-divider')).not.toMatch(/(^|;)\s*gap:/);
     });
 
-    it('never hides the line of an empty divider', () => {
-      const block = containerBlock();
-      expect(block).not.toMatch(/\.text-divider-empty::before[^{}]*\{[^}]*display: none/);
-      expect(block).not.toMatch(/\.text-divider-empty::after[^{}]*\{[^}]*display: block/);
+    it('clips the gap off the side of each line that faces the text', () => {
+      expect(css).toMatch(/\.text-divider::before \{[^}]*clip-path: inset\(-1em var\(--_gap\) -1em 0\)/);
+      expect(css).toMatch(/\.text-divider::after \{[^}]*clip-path: inset\(-1em 0 -1em var\(--_gap\)\)/);
+    });
+
+    it('draws an empty divider as one unclipped line', () => {
+      const line = rule('.text-divider-empty::before');
+      expect(line).toContain('flex: 1');
+      expect(line).toContain('clip-path: none');
+    });
+
+    it('keeps the gap between an icon and the text', () => {
+      expect(rule('ha-icon + .text-divider-text')).toContain('margin-inline-start: var(--_gap)');
     });
   });
 });
